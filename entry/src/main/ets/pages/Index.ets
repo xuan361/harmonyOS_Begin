@@ -1,45 +1,51 @@
-// Index.ets
-import { BusinessError } from '@kit.BasicServicesKit';
-
 @Entry
 @Component
-struct Index {
-  @State message: string = 'Hello World';
+struct ArticalList {
+  @State simpleList: Array<number> = [1,2,3,4,5];
 
+  build(){
+    Column() {
+      ForEach(this.simpleList, (item: number) => {
+        ArticleSkeletonView()
+          .margin({top: 20})
+      }, (item: number) => item.toString())
+    }
+    .padding(20)
+    .width('100%')
+    .height('100%')
+  }
+}
+
+@Builder
+function textArea(width: number | Resource | string = '100%', height: number | Resource | string = '100%') {
+  Row()
+    .width(width)
+    .height(height)
+    .backgroundColor('#fff2f3f4')
+}
+
+@Component
+struct ArticleSkeletonView {
   build() {
     Row() {
       Column() {
-        Text(this.message)
-          .fontSize(50)
-          .fontWeight(FontWeight.Bold)
-        // 添加按钮，以响应用户onClick事件
-        Button() {
-          Text('Next')
-            .fontSize(30)
-            .fontWeight(FontWeight.Bold)
-        }
-        .type(ButtonType.Capsule)
-        .margin({
-          top: 20
-        })
-        .backgroundColor('#0D9FFB')
-        .width('40%')
-        .height('5%')
-        .onClick(() =>{
-          console.info(`Succeeded in clicking the 'Next' button.`)
-          // 获取UIContext
-          let uiContext: UIContext = this.getUIContext();
-          let router = uiContext.getRouter();
-          // 跳转到第二页
-          router.pushUrl({ url: 'pages/Second' }).then(() => {
-            console.info('Succeeded in jumping to the second page.')
-          }).catch((err: BusinessError) => {
-            console.error(`Failed to jump to the second page. Code is ${err.code}, message is ${err.message}`)
-          })
-        })
+        textArea(80, 80)
       }
-      .width('100%')
+      .margin({right: 20})
+
+      Column() {
+        textArea('60%', 20)
+        textArea('50%', 20)
+      }
+      .alignItems(HorizontalAlign.Start)
+      .justifyContent(FlexAlign.SpaceAround)
+      .height('100%')
     }
-    .height('100%')
+    .padding(20)
+    .borderRadius(12)
+    .backgroundColor('#FFECECEC')
+    .height(120)
+    .width('100%')
+    .justifyContent(FlexAlign.SpaceBetween)
   }
 }
