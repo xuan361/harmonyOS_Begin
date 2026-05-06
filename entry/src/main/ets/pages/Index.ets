@@ -1,51 +1,45 @@
 @Entry
 @Component
-struct ArticalList {
-  @State simpleList: Array<number> = [1,2,3,4,5];
+struct ForEachSort {
+  @State arr: Array<string> = [];
 
-  build(){
-    Column() {
-      ForEach(this.simpleList, (item: number) => {
-        ArticleSkeletonView()
-          .margin({top: 20})
-      }, (item: number) => item.toString())
-    }
-    .padding(20)
-    .width('100%')
-    .height('100%')
-  }
-}
-
-@Builder
-function textArea(width: number | Resource | string = '100%', height: number | Resource | string = '100%') {
-  Row()
-    .width(width)
-    .height(height)
-    .backgroundColor('#fff2f3f4')
-}
-
-@Component
-struct ArticleSkeletonView {
   build() {
-    Row() {
-      Column() {
-        textArea(80, 80)
-      }
-      .margin({right: 20})
+    Column() {
+      // 点击此按钮会触发ForEach重新渲染
+      Button('Add one item')
+        .onClick(() => {
+          this.arr.push('10');
+        })
+        .width(300)
+        .margin(10)
 
-      Column() {
-        textArea('60%', 20)
-        textArea('50%', 20)
+      List() {
+        ForEach(this.arr, (item: string) => {
+          ListItem() {
+            Text(item.toString())
+              .fontSize(16)
+              .textAlign(TextAlign.Center)
+              .size({ height: 100, width: '100%' })
+          }.margin(10)
+          .borderRadius(10)
+          .backgroundColor('#FFFFFFFF')
+        }, (item: string) => item)
+          .onMove((from: number, to: number) => {
+            // 以下两行代码是为了确保拖拽后屏幕上组件的顺序与数组arr中每一项的顺序保持一致。
+            // 若注释以下两行，第一步拖拽排序，第二步在arr末尾插入一项，触发ForEach渲染，此时屏上组件的顺序会跟数组arr中每一项的顺序一致，而不是维持第一步拖拽后的顺序，意味着拖拽排序在ForEach渲染后失效了。
+            let tmp = this.arr.splice(from, 1);
+            this.arr.splice(to, 0, tmp[0]);
+          })
       }
-      .alignItems(HorizontalAlign.Start)
-      .justifyContent(FlexAlign.SpaceAround)
+      .width('100%')
       .height('100%')
+      .backgroundColor('#FFDCDCDC')
     }
-    .padding(20)
-    .borderRadius(12)
-    .backgroundColor('#FFECECEC')
-    .height(120)
-    .width('100%')
-    .justifyContent(FlexAlign.SpaceBetween)
+  }
+
+  aboutToAppear(): void {
+    for (let i = 0; i < 10; i++) {
+      this.arr.push(i.toString());
+    }
   }
 }
